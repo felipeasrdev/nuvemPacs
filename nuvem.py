@@ -2,6 +2,8 @@ import pandas as pd
 import streamlit as st
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
+import re
+from collections import Counter
 
 # Carregar o CSV (substitua 'seuarquivo.csv' pelo nome do seu arquivo)
 st.title("Nuvem de Palavras Interativa")
@@ -14,6 +16,9 @@ if uploaded_file is not None:
     column = st.selectbox("Escolha a coluna de texto", df.columns)
     text = " ".join(df[column].astype(str))
     
+    # Remover variantes de "classificação de risco"
+    text = re.sub(r'\bclassifica[cç]?[aã]o? ?de? ?risco\b', '', text, flags=re.IGNORECASE)
+    
     # Gerar a nuvem de palavras
     wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
     
@@ -24,8 +29,18 @@ if uploaded_file is not None:
     ax.axis("off")
     st.pyplot(fig)
     
+    
+    
     # Barra de pesquisa
     search_query = st.text_input("Buscar palavra")
     if search_query:
         occurrences = text.lower().split().count(search_query.lower())
         st.write(f"A palavra '{search_query}' aparece {occurrences} vezes no texto.")
+# Contar as palavras mais frequentes
+    word_list = re.findall(r'\b\w+\b', text.lower())
+    word_counts = Counter(word_list)
+    most_common_words = word_counts.most_common(10)
+    
+    st.subheader("Top 10 palavras mais frequentes")
+    for word, count in most_common_words:
+        st.write(f"{word}: {count} vezes")

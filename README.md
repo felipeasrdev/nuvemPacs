@@ -1,4 +1,4 @@
-# nuvemPacs
+# Nuvem de Palavras Interativa
 APP streamlit que faz uma nuvem de palavras utilizando a bibiloteca wordcloud.
 # use
 - 1- pip install -r requirements.txt
